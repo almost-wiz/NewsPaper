@@ -1,10 +1,14 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 
 class Author(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     rating = models.FloatField(max_length=10, default=0.0)
+
+    def __str__(self):
+        return f'{self.user.username} ~ {self.rating}'
 
     def update_rating(self):
         posts_r = Post.objects.filter(author=self.id).values('rating')
@@ -43,12 +47,15 @@ class Post(models.Model):
 
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     type = models.CharField(max_length=1, choices=POSITIONS, default=article)
-    date = models.DateTimeField(auto_now_add=True)
+    date = models.DateTimeField(default=timezone.now)
     title = models.CharField(max_length=256)
     text = models.TextField()
     rating = models.FloatField(max_length=10, default=0.0)
 
     categories = models.ManyToManyField(Category, through="PostCategory")
+
+    def __str__(self):
+        return f'{self.title} ~ {self.text[:50]}...'
 
     def like(self):
         self.rating += 1

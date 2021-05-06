@@ -7,10 +7,16 @@ News
 
 {% block content %}
 
-<h1>Все публикации</h1>
-<h4>Всего публикаций - {{ news_length }}</h4>
+<h1>Поиск</h1>
+{% if req %}
+    <h4>Найдено статей - {{ news_length }}</h4>
+{% endif %}
 <hr>
-{% if posts %}
+<form method="get">
+    {{ filter.form }}
+    <input type="submit" value="Поиск" />
+</form>
+{% if posts and req %}
     <table class="table">
         <thead>
             <tr>
@@ -50,13 +56,15 @@ News
             {% endfor %}
         </tbody>
     </table>
+{% elif req %}
+    <br><h3>По данному запросу ничего не найдено!</h3>
 {% else %}
-    <h2>Постов нет!</h2>
+    <br><h3>Выберите параметры для поиска!</h3>
 {% endif %}
 
 <br>
 
-{% if is_paginated %}
+{% if is_paginated and req %}
     <nav>
         <ul class="pagination justify-content-center">
             {% if page_obj.has_previous %}
