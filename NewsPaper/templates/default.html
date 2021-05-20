@@ -34,20 +34,33 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav ml-auto">
+          {% if request.user.is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="/news/create">Добавить пост</a>
+            </li>
+          {% endif %}
           <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="/news/create">New publication</a>
+            <a class="nav-link js-scroll-trigger" href="/news/search">Поиск</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="/news/search">Search</a>
+            <a class="nav-link js-scroll-trigger" href="/news">Публикации</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="/news">Posts</a>
-          </li>
+          {% if request.user.is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="/accounts/logout?next=/accounts/login">Выйти</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#">{{ request.user.username }}</a>
+            </li>
+          {% else %}
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="/accounts/login">Войти в систему</a>
+            </li>
+          {% endif %}
         </ul>
       </div>
     </div>
   </nav>
-
   <!-- Page Content -->
   <div class="container" style="margin-top: 100px">
     <div class="row">

@@ -9,6 +9,11 @@ News
 
 <h1>Все публикации</h1>
 <h4>Всего публикаций - {{ news_length }}</h4>
+{% if is_not_author and request.user.is_authenticated %}
+    <button class="btn btn-light">
+        <a href="/user/upgrade/">Стать автором</a>
+    </button>
+{% endif %}
 <hr>
 {% if posts %}
     <table class="table">

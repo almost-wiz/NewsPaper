@@ -1,5 +1,6 @@
 # from django.shortcuts import render
-from django.views.generic import ListView, DetailView, UpdateView,CreateView, DeleteView
+from django.views.generic import ListView, DetailView, UpdateView, CreateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from .models import Post
 from .filters import PostFilter
 from .forms import CreatePostForm
@@ -15,6 +16,7 @@ class PostsList(ListView):
     def get_context_data(self, **kwargs):
         context = super(PostsList, self).get_context_data(**kwargs)
         context['news_length'] = self.model.objects.all().count()
+        context['is_not_author'] = not self.request.user.groups.filter(name='author').exists()
         return context
 
 
@@ -48,13 +50,15 @@ class PostDetail(DetailView):
     context_object_name = 'post'
 
 
-class PostCreate(CreateView):
+class PostCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    permission_required = ('NewsPaperApp.create_post', )
     template_name = 'post_create.html'
     form_class = CreatePostForm
     success_url = '/news/'
 
 
-class PostUpdate(UpdateView):
+class PostUpdate(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    permission_required = ('NewsPaperApp.edit_post', )
     template_name = 'post_create.html'
     form_class = CreatePostForm
     success_url = '/news/'
@@ -64,7 +68,8 @@ class PostUpdate(UpdateView):
         return Post.objects.get(pk=id)
 
 
-class PostDelete(DeleteView):
+class PostDelete(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    permission_required = ('NewsPaperApp.delete_post', )
     template_name = 'post_delete.html'
     queryset = Post.objects.all()
     success_url = '/news/'
