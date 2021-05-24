@@ -11,7 +11,7 @@ News
 <h4>Всего публикаций - {{ news_length }}</h4>
 {% if is_not_author and request.user.is_authenticated %}
     <button class="btn btn-light">
-        <a href="/user/upgrade/">Стать автором</a>
+        <a href="/news/upgrade/">Стать автором</a>
     </button>
 {% endif %}
 <hr>
@@ -20,37 +20,61 @@ News
         <thead>
             <tr>
                 <th>
-                    Заголовок
+                    Дата
                 </th>
                 <th>
-                    Дата публикации
+                    Категория
+                </th>
+                <th>
+                    Заголовок
                 </th>
                 <th>
                     Предпоказ
                 </th>
-                <th colspan="2">
-                    Действия
-                </th>
+                {% if not is_not_author %}
+                    <th colspan="2">
+                        Действия
+                    </th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
             {% for post in posts %}
                 <tr>
                     <td>
-                        <a href="/news/{{ post.id }}">{{ post.title|truncatechars:'30'|censor }}</a>
+                        {{ post.date|date:'d M Y' }}
                     </td>
                     <td>
-                        {{ post.date|date:'d M Y' }}
+                        {% for c in categories %}
+                            {% if c.post.title == post.title %}
+                                <a href="/news/category/{{ c.category.id }}">
+                                    <button class="btn btn-light btn-link">
+                                        {{ c.category }}
+                                    </button>
+                                </a>
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        <a href="/news/{{ post.id }}">{{ post.title|truncatechars:'30'|censor }}</a>
                     </td>
                     <td>
                         {{ post.text|truncatechars:50|censor }}
                     </td>
-                    <td>
-                        <a href="/news/update/{{ post.id }}">Изменить</a>
-                    </td>
-                    <td>
-                        <a href="/news/delete/{{ post.id }}">Удалить</a>
-                    </td>
+                    {% if not is_not_author %}
+                        {% if post.author.user.username == request.user.username %}
+                            <td>
+                                <a href="/news/update/{{ post.id }}">Изменить</a>
+                            </td>
+                            <td>
+                                <a href="/news/delete/{{ post.id }}">Удалить</a>
+                            </td>
+                        {% else %}
+                            <td colspan="2">
+                                <a href="/news/{{ post.id }}">Посмотреть</a>
+                            </td>
+                        {% endif %}
+                    {% endif %}
                 </tr>
             {% endfor %}
         </tbody>

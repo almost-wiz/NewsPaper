@@ -21,5 +21,4 @@ urlpatterns = [
     path('', include('NewsPaperApp.urls')),
     path('news/', include('NewsPaperApp.urls')),
     path('accounts/', include('allauth.urls')),
-    path('user/', include('sign.urls')),
 ]
