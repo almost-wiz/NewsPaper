@@ -48,8 +48,10 @@ INSTALLED_APPS = [
 
     # apps
     'django_filters',
-    'NewsPaperApp',
-    'sign'
+    'NewsPaperApp.apps.NewsPaperAppConfig',
+    'sign',
+
+    'django_apscheduler',
 ]
 
 MIDDLEWARE = [
@@ -95,7 +97,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -154,14 +155,25 @@ ACCOUNT_UNIQUE_USERNAME = True
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_AUTHENTICATION_METHOD = 'username'
-ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_EMAIL_VERIFICATION = True
 
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/news/'
 
 # Auto-adding new user to group 'common'
 ACCOUNT_FORMS = {
-    'signup': 'sign.models.BasicSignupForm'
+    'login': 'sign.forms.CustomLoginForm',
+    'signup': 'sign.forms.CustomSignupForm'
 }
 
 SITE_ID = 1
+
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = 'furrynewspaper'
+EMAIL_HOST_PASSWORD = ''
+EMAIL_USE_SSL = True
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER + '@yandex.ru'
+
+APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
+APSCHEDULER_RUN_NOW_TIMEOUT = 25

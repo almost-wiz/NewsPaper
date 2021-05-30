@@ -3,10 +3,10 @@ from django.views.generic import ListView, DetailView, UpdateView, CreateView, D
 from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.contrib.auth.models import User
-from .models import Post, Author, PostCategory, Category
+from .models import *
 from .filters import PostFilter
 from .forms import CreatePostForm
+import datetime
 
 
 class PostsList(ListView):
@@ -61,18 +61,34 @@ class PostCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     form_class = CreatePostForm
     success_url = '/news/'
 
+    def get_context_data(self, **kwargs):
+        context = super(PostCreate, self).get_context_data()
+        context['is_create_view'] = True
+        return context
+
     def post(self, request, *args, **kwargs):
-        user = User.objects.get(username=request.user.username)
-        author = Author.objects.get(user=user.id)
+        user = User.objects.get(id=request.user.id)
+        author = Author.objects.get(user=user)
+        date = datetime.datetime.now(tz=timezone.utc).strftime('%Y-%m-%d')
+
+        author_posts = Post.objects.filter(author=author).values('id', 'date')
+        limit_check_posts = []
+        for post in author_posts:
+            post_date = post['date'].strftime('%Y-%m-%d')
+            post['date'] = post_date
+            limit_check_posts.append(post) if post_date == date else None
+
+        if len(limit_check_posts) >= 3:
+            return redirect(self.success_url)
+
         type = request.POST['type']
         title = request.POST['title']
         text = request.POST['text']
         categories = request.POST.getlist('categories')
 
-        post = Post(author=author, type=type, title=title, text=text)
-        post.save()
-        for category in categories:
-            post.categories.add(category)
+        post = Post.objects.create(author=author, type=type, title=title, text=text)
+        post.categories.add(*categories)
+
         return redirect(self.success_url)
 
 
@@ -120,15 +136,35 @@ class CategoryDetail(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(CategoryDetail, self).get_context_data(**kwargs)
         context['posts'] = list(Post.objects.filter(categories=context['category']).order_by('-id'))[:3]
-        context['is_subscriber'] = Category.objects.filter(id=self.request.path.split('/')[-1], subscribers=self.request.user).exists()
+
+        subscription, subscriber = self.request.path.split('/')[-1], Subscriber.objects.filter(
+            user=self.request.user).first()
+        context['is_subscriber'] = CategorySubscriber.objects.filter(subscriptions=subscription,
+                                                                     subscriber=subscriber).exists()
+        context['subscribers_count'] = CategorySubscriber.objects.filter(subscriptions=subscription).count()
         return context
 
 
 @login_required
 def subscribe_category(request, **kwargs):
-    user = request.user
-    category_id = request.path.split('/')[-1]
-    Category.objects.get(id=category_id).subscribers.add(user)
+    category_id, user = request.path.split('/')[-1], request.user
+    category = Category.objects.get(id=category_id)
+    if not Subscriber.objects.filter(user=user).exists():
+        subscriber = Subscriber.objects.create(user=user)
+    else:
+        subscriber = Subscriber.objects.get(user=user)
+    if not CategorySubscriber.objects.filter(subscriptions=category_id, subscriber=subscriber).exists():
+        subscriber.subscriptions.add(category)
+    return redirect('/news/category/' + category_id)
+
+
+@login_required
+def unsubscribe_category(request, **kwargs):
+    category_id, user = request.path.split('/')[-1], request.user
+    category = Category.objects.get(id=category_id)
+    subscriber = Subscriber.objects.get(user=user)
+    if CategorySubscriber.objects.filter(subscriptions=category_id, subscriber=subscriber).exists():
+        subscriber.subscriptions.remove(category)
     return redirect('/news/category/' + category_id)
 
 
