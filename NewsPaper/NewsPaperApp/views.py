@@ -6,6 +6,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 from .models import *
 from .filters import PostFilter
 from .forms import CreatePostForm
+from .tasks import notify_new_post
 import datetime
 
 
@@ -88,6 +89,9 @@ class PostCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
 
         post = Post.objects.create(author=author, type=type, title=title, text=text)
         post.categories.add(*categories)
+
+        if request.POST.getlist('mailing'):
+            notify_new_post.delay(post.id, categories)
 
         return redirect(self.success_url)
 
