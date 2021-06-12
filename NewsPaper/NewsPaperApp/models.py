@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.core.cache import cache
 
 
 class Author(models.Model):
@@ -41,6 +42,10 @@ class Category(models.Model):
     def __str__(self):
         return f'{self.position}'
 
+    class Meta:
+        verbose_name = 'Category'
+        verbose_name_plural = 'Categories'
+
 
 class Subscriber(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -76,6 +81,10 @@ class Post(models.Model):
     def __str__(self):
         return f'{self.title} ~ {self.text[:50]}...'
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        cache.delete(f'post-{self.pk}')
+
     def like(self):
         self.rating += 1
         self.save()
@@ -94,6 +103,10 @@ class PostCategory(models.Model):
 
     def __str__(self):
         return f'{self.post} ~ {self.category}'
+
+    class Meta:
+        verbose_name = 'Post category'
+        verbose_name_plural = 'Post categories'
 
 
 class Comment(models.Model):

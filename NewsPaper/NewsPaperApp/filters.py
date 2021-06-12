@@ -1,36 +1,40 @@
-# -*- coding: utf-8 -*-
 from .models import Post, Category
 from django_filters import FilterSet
-from django.forms import DateInput
-
-
+from django import forms
 import django_filters
 
 
 class PostFilter(FilterSet):
 
+    type = django_filters.ChoiceFilter(
+        field_name='type',
+        choices=Post.POSITIONS,
+        lookup_expr='icontains',
+        widget=forms.Select(attrs={'class': 'form-control'}),
+    )
+
     author = django_filters.CharFilter(
         field_name='author_id__user_id__username',
         lookup_expr='icontains',
-        label='Автор'
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
     )
     title = django_filters.CharFilter(
         field_name='title',
         lookup_expr='icontains',
-        label='Заголовок'
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Название'}),
     )
-    datetime = django_filters.DateFilter(
+    date = django_filters.DateFilter(
         field_name='date',
-        widget=DateInput(attrs={'type': 'date'}),
+        widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
         lookup_expr='gt',
-        label='Позже даты'
     )
     categories = django_filters.ModelChoiceFilter(
         field_name='categories',
-        label='Категория',
+        widget=forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
         queryset=Category.objects.all(),
+        method='categories_filter'
     )
 
     class Meta:
         model = Post
-        fields = []
+        fields = ['type', 'author', 'title', 'date', 'categories']

@@ -1,8 +1,9 @@
-from django.shortcuts import redirect
-from django.views.generic import ListView, DetailView, UpdateView, CreateView, DeleteView
+from django.shortcuts import redirect, render
+from django.views.generic import ListView, DetailView, UpdateView, CreateView, DeleteView, TemplateView
 from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.core.cache import cache
 from .models import *
 from .filters import PostFilter
 from .forms import CreatePostForm
@@ -41,6 +42,7 @@ class PostsSearch(ListView):
     def get_context_data(self, **kwargs):
         context = super(PostsSearch, self).get_context_data(**kwargs)
         context['news_length'] = self.filterset.qs.count()
+        context['is_not_author'] = not self.request.user.groups.filter(name='author').exists()
         context['categories'] = PostCategory.objects.all()
         context['filter'] = PostFilter(self.request.GET, queryset=self.get_queryset())
         request_params = self.request.GET.dict()
@@ -49,11 +51,31 @@ class PostsSearch(ListView):
         context['req'] = request_params
         return context
 
+    # def get(self, request, **kwargs):
+    #     filters = request.GET.get('filter', None)
+    #     if filters:
+    #         posts = Post.objects.filter(manager=filters)
+    #     else:
+    #         posts = Post.objects.all()
+    #     context = {
+    #         'posts': posts,
+    #     }
+    #     return render(request, self.template_name, context)
+
 
 class PostDetail(DetailView):
     model = Post
     template_name = 'post.html'
     context_object_name = 'post'
+
+    def get_object(self, *args, **kwargs):
+        obj = cache.get(f'post-{self.kwargs["pk"]}', None)
+
+        if not obj:
+            obj = super().get_object()
+            cache.set(f'post-{self.kwargs["pk"]}', obj)
+
+        return obj
 
 
 class PostCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
@@ -64,14 +86,33 @@ class PostCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(PostCreate, self).get_context_data()
+        author = Author.objects.get(user=User.objects.get(id=self.request.user.id))
+        context['can_create_post'] = self.can_create_post(author)
         context['is_create_view'] = True
         return context
 
     def post(self, request, *args, **kwargs):
-        user = User.objects.get(id=request.user.id)
-        author = Author.objects.get(user=user)
-        date = datetime.datetime.now(tz=timezone.utc).strftime('%Y-%m-%d')
+        author = Author.objects.get(user=User.objects.get(id=request.user.id))
 
+        if not self.can_create_post(author):
+            return redirect(self.success_url)
+
+        article_type = request.POST['type']
+        title = request.POST['title']
+        text = request.POST['text']
+        categories = request.POST.getlist('categories')
+
+        post = Post.objects.create(author=author, type=article_type, title=title, text=text)
+        post.categories.add(*categories)
+
+        if request.POST.getlist('mailing'):
+            notify_new_post.delay(post.id, categories)
+
+        return redirect(self.success_url)
+
+    @staticmethod
+    def can_create_post(author):
+        date = datetime.datetime.now(tz=timezone.utc).strftime('%Y-%m-%d')
         author_posts = Post.objects.filter(author=author).values('id', 'date')
         limit_check_posts = []
         for post in author_posts:
@@ -80,20 +121,8 @@ class PostCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
             limit_check_posts.append(post) if post_date == date else None
 
         if len(limit_check_posts) >= 3:
-            return redirect(self.success_url)
-
-        type = request.POST['type']
-        title = request.POST['title']
-        text = request.POST['text']
-        categories = request.POST.getlist('categories')
-
-        post = Post.objects.create(author=author, type=type, title=title, text=text)
-        post.categories.add(*categories)
-
-        if request.POST.getlist('mailing'):
-            notify_new_post.delay(post.id, categories)
-
-        return redirect(self.success_url)
+            return False
+        return True
 
 
 class PostUpdate(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
@@ -149,6 +178,27 @@ class CategoryDetail(LoginRequiredMixin, DetailView):
         return context
 
 
+class BecomeAuthor(LoginRequiredMixin, TemplateView):
+    template_name = 'become_author.html'
+    success_url = '/news/'
+
+    def get_context_data(self, **kwargs):
+        context = super(BecomeAuthor, self).get_context_data()
+        context['is_not_author'] = not self.request.user.groups.filter(name='author').exists()
+        return context
+
+
+@login_required
+def upgrade_author(request, **kwargs):
+    user = request.user
+    author_group = Group.objects.get(name='author')
+    if not request.user.groups.filter(name='author').exists():
+        author_group.user_set.add(user)
+        Author.objects.create(user=user)
+
+    return redirect('/news')
+
+
 @login_required
 def subscribe_category(request, **kwargs):
     category_id, user = request.path.split('/')[-1], request.user
@@ -170,13 +220,3 @@ def unsubscribe_category(request, **kwargs):
     if CategorySubscriber.objects.filter(subscriptions=category_id, subscriber=subscriber).exists():
         subscriber.subscriptions.remove(category)
     return redirect('/news/category/' + category_id)
-
-
-@login_required
-def become_author(request):
-    user = request.user
-    author_group = Group.objects.get(name='author')
-    if not request.user.groups.filter(name='author').exists():
-        author_group.user_set.add(user)
-        Author.objects.create(user=user)
-    return redirect('/news')

@@ -1,0 +1,23 @@
+{% extends 'default.html' %}
+
+{% block title %}
+Стать авторои
+{% endblock title %}
+
+{% block content %}
+<div class="text-center">
+    {% if is_not_author %}
+        <h4>Став автором, вы сможете писать свои статьи и новости, выкладывать их в общий доступ, изменять их и удалять.
+        При этом в вашем профиле будет отображаться, что вы автор всем пользователем. У всех ваших публикаций также будет
+        видно ваше имя</h4><br>
+        <a href="/news/upgrade/author">
+            <button class="btn btn-light">
+                Стать автором
+            </button>
+        </a>
+    {% else %}
+      <h3>Не требуется, вы уже автор</h3>
+    {% endif %}
+</div>
+
+{% endblock content %}

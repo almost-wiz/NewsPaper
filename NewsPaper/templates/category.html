@@ -34,7 +34,7 @@
             <thead>
                 <tr>
                     <th>
-                        Дата публикации
+                        Дата
                     </th>
                     <th>
                         Заголовок
@@ -43,9 +43,7 @@
                         Предпоказ
                     </th>
                     {% if not is_not_author %}
-                        <th colspan="2">
-                            Действия
-                        </th>
+                        <th></th>
                     {% endif %}
                 </tr>
             </thead>
@@ -53,7 +51,7 @@
                 {% for post in posts %}
                     <tr>
                         <td>
-                            {{ post.date|date:'d M Y' }}
+                            {{ post.date|date:'d.m.Y' }}
                         </td>
                         <td>
                             <a href="/news/{{ post.id }}">{{ post.title|truncatechars:'30'|censor }}</a>
@@ -62,18 +60,19 @@
                             {{ post.text|truncatechars:50|censor }}
                         </td>
                         {% if not is_not_author %}
-                            {% if post.author.user.username == request.user.username %}
-                                <td>
-                                    <a href="/news/update/{{ post.id }}">Изменить</a>
-                                </td>
-                                <td>
-                                    <a href="/news/delete/{{ post.id }}">Удалить</a>
-                                </td>
-                            {% else %}
-                                <td colspan="2">
-                                    <a href="/news/{{ post.id }}">Посмотреть</a>
-                                </td>
-                            {% endif %}
+                          <td>
+                            <div class="dropdown">
+                              <button class="btn btn-light dropdown-toggle border-0" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                {% if post.author.user.username == request.user.username %}
+                                  <a class="dropdown-item" href="/news/update/{{ post.id }}">Изменить</a>
+                                  <a class="dropdown-item" href="/news/delete/{{ post.id }}">Удалить</a>
+                                {% else %}
+                                  <a class="dropdown-item" href="/news/{{ post.id }}">Посмотреть</a>
+                                {% endif %}
+                              </div>
+                            </div>
+                          </td>
                         {% endif %}
                     </tr>
                 {% endfor %}
