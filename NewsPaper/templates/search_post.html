@@ -40,9 +40,11 @@
     <label>Категории</label>
     <div class="row col">
     {% for field in filter.form.categories %}
-      <div class="form-check col-sm-4">
-        {{ field }}
-      </div>
+      {% if field.data.label != '---------' %}
+        <div class="form-check col-sm-4">
+          {{ field }}
+        </div>
+      {% endif %}
     {% endfor %}
     </div>
   </div>

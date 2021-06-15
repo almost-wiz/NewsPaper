@@ -1,9 +1,8 @@
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
 from django.views.generic import ListView, DetailView, UpdateView, CreateView, DeleteView, TemplateView
 from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.core.cache import cache
 from .models import *
 from .filters import PostFilter
 from .forms import CreatePostForm
@@ -27,40 +26,44 @@ class PostsList(ListView):
 
 
 class PostsSearch(ListView):
-    filterset_class = PostFilter
+    filter_set_class = PostFilter
     model = Post
     template_name = 'search_post.html'
     context_object_name = 'posts'
     ordering = ['-id']
     paginate_by = 10
 
+    def __init__(self):
+        super().__init__()
+        self.filtered_posts = []
+
     def get_queryset(self):
         queryset = super().get_queryset()
-        self.filterset = self.filterset_class(self.request.GET, queryset=queryset)
-        return self.filterset.qs.distinct()
+        filter_set = self.filter_set_class(self.request.GET, queryset=queryset)
+        filter_categories = self.request.GET.getlist('categories', None)
+        if not filter_categories:
+            self.filtered_posts = filter_set.qs.distinct()
+        else:
+            for post in filter_set.qs.distinct():
+                flag = False
+                for post_category in post.categories.all():
+                    if str(post_category.id) in filter_categories:
+                        flag = True
+                if flag:
+                    self.filtered_posts.append(post)
+        return self.filtered_posts
 
     def get_context_data(self, **kwargs):
         context = super(PostsSearch, self).get_context_data(**kwargs)
-        context['news_length'] = self.filterset.qs.count()
+        context['news_length'] = len(self.filtered_posts)
         context['is_not_author'] = not self.request.user.groups.filter(name='author').exists()
         context['categories'] = PostCategory.objects.all()
-        context['filter'] = PostFilter(self.request.GET, queryset=self.get_queryset())
+        context['filter'] = PostFilter(self.request.GET)
         request_params = self.request.GET.dict()
         if request_params.get('page'):
             request_params.pop('page')
         context['req'] = request_params
         return context
-
-    # def get(self, request, **kwargs):
-    #     filters = request.GET.get('filter', None)
-    #     if filters:
-    #         posts = Post.objects.filter(manager=filters)
-    #     else:
-    #         posts = Post.objects.all()
-    #     context = {
-    #         'posts': posts,
-    #     }
-    #     return render(request, self.template_name, context)
 
 
 class PostDetail(DetailView):
@@ -132,8 +135,7 @@ class PostUpdate(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     success_url = '/news/'
 
     def get_object(self, **kwargs):
-        id = self.kwargs.get('pk')
-        return Post.objects.get(pk=id)
+        return Post.objects.get(pk=self.kwargs.get('pk'))
 
     def post(self, request, *args, **kwargs):
         new_categories = list(map(int, request.POST.getlist('categories')))

@@ -16,7 +16,7 @@ class PostFilter(FilterSet):
     author = django_filters.CharFilter(
         field_name='author_id__user_id__username',
         lookup_expr='icontains',
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Автор'}),
     )
     title = django_filters.CharFilter(
         field_name='title',
@@ -32,7 +32,6 @@ class PostFilter(FilterSet):
         field_name='categories',
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
         queryset=Category.objects.all(),
-        method='categories_filter'
     )
 
     class Meta:
