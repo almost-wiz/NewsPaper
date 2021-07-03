@@ -54,6 +54,11 @@ class Subscriber(models.Model):
     def __str__(self):
         return f'{self.user}'
 
+    @property
+    def in_subscriptions(self):
+        list_of_subscriptions = [category.position for category in self.subscriptions.all()]
+        return list_of_subscriptions
+
 
 class CategorySubscriber(models.Model):
     subscriber = models.ForeignKey(Subscriber, on_delete=models.CASCADE)
@@ -77,6 +82,11 @@ class Post(models.Model):
     text = models.TextField()
     rating = models.FloatField(max_length=10, default=0.0)
     categories = models.ManyToManyField(Category, through="PostCategory")
+
+    @property
+    def in_category(self):
+        list_of_category = [category.position for category in self.categories.all()]
+        return list_of_category
 
     def __str__(self):
         return f'{self.title} ~ {self.text[:50]}...'
@@ -115,6 +125,9 @@ class Comment(models.Model):
     text = models.TextField()
     date = models.DateTimeField(auto_now_add=True)
     rating = models.FloatField(max_length=10, default=0.0)
+
+    def __str__(self):
+        return f'{self.user} ~ {self.text[:50]}'
 
     def like(self):
         self.rating += 1

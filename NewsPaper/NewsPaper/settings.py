@@ -159,17 +159,17 @@ ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_UNIQUE_USERNAME = True
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_AUTHENTICATION_METHOD = 'username'
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
 ACCOUNT_EMAIL_VERIFICATION = True
 
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/news/'
 
-# Auto-adding new user to group 'common'
 ACCOUNT_FORMS = {
     'login': 'sign.forms.CustomLoginForm',
     'signup': 'sign.forms.CustomSignupForm'
 }
+ACCOUNT_ADAPTER = 'sign.adapter.CustomDefaultAccountAdapter'
 
 SITE_ID = 1
 

@@ -170,13 +170,16 @@ class CategoryDetail(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(CategoryDetail, self).get_context_data(**kwargs)
+
+        subscription = self.request.path.split('/')[-1]
+        subscriber = Subscriber.objects.filter(user=self.request.user).first()
+        context['is_subscriber'] = CategorySubscriber.objects.filter(
+            subscriptions=subscription,
+            subscriber=subscriber
+        ).exists()
+        context['subscribers_count'] = CategorySubscriber.objects.filter(subscriptions=subscription).count()
         context['posts'] = list(Post.objects.filter(categories=context['category']).order_by('-id'))[:3]
 
-        subscription, subscriber = self.request.path.split('/')[-1], Subscriber.objects.filter(
-            user=self.request.user).first()
-        context['is_subscriber'] = CategorySubscriber.objects.filter(subscriptions=subscription,
-                                                                     subscriber=subscriber).exists()
-        context['subscribers_count'] = CategorySubscriber.objects.filter(subscriptions=subscription).count()
         return context
 
 

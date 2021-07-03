@@ -17,41 +17,39 @@ class CustomLoginForm(LoginForm):
                 "Ваш логин и/или пароль указаны неверно."
             ),
         }
-        login_widget = forms.TextInput(
-            attrs={
-                "placeholder": _("Логин"),
-                "autocomplete": "username",
-                "class": "form-control",
-                "id": "login"
-            }
-        )
         login_field = forms.CharField(
-            label=_("Логин"),
-            widget=login_widget,
-        )
-        password_widget = forms.PasswordInput(
-            attrs={
-                "placeholder": _("Пароль"),
-                "autocomplete": "current-password",
-                "class": "form-control",
-                "id": "password"
-            }
+            label=_("Логин или e-mail"),
+            widget=forms.TextInput(
+                attrs={
+                    "placeholder": _("Логин или e-mail"),
+                    "autocomplete": "username_email",
+                    "class": "form-control",
+                    "id": "login"
+                }
+            ),
         )
         password_field = forms.CharField(
             label=_("Пароль"),
-            widget=password_widget,
-        )
-        remember_widget = forms.CheckboxInput(
-            attrs={
-                "class": "form-check-input",
-                "id": "remember"
-            }
+            widget=forms.PasswordInput(
+                attrs={
+                    "placeholder": _("Пароль"),
+                    "autocomplete": "current-password",
+                    "class": "form-control",
+                    "id": "password"
+                }
+            ),
         )
         remember = forms.BooleanField(
             label=_("Запомнить меня"),
             required=False,
-            widget=remember_widget
+            widget=forms.CheckboxInput(
+                attrs={
+                    "class": "form-check-input",
+                    "id": "remember"
+                }
+            )
         )
+
         self.fields["login"] = login_field
         self.fields["password"] = password_field
         self.fields['remember'] = remember
@@ -101,7 +99,7 @@ class CustomSignupForm(SignupForm):
             label=_("Повторите пароль"),
             widget=forms.PasswordInput(
                 attrs={
-                    "placeholder": _("Пароль"),
+                    "placeholder": _("Повторите пароль"),
                     "autocomplete": "current-password",
                     "class": "form-control",
                     "id": "password2"
