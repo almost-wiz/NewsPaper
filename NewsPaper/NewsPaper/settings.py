@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
+from NewsPaper.logging_settings import logging_params
+from NewsPaper.email_data import *
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -177,12 +179,12 @@ ACCOUNT_ADAPTER = 'sign.adapter.CustomDefaultAccountAdapter'
 
 SITE_ID = 1
 
-EMAIL_HOST = 'smtp.yandex.ru'
-EMAIL_PORT = 465
-EMAIL_HOST_USER = 'furrynewspaper'
-EMAIL_HOST_PASSWORD = 'derporoLLL777'
-EMAIL_USE_SSL = True
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER + '@yandex.ru'
+EMAIL_HOST = email_host
+EMAIL_PORT = email_port
+EMAIL_HOST_USER = email_host_user
+EMAIL_HOST_PASSWORD = email_host_password
+EMAIL_USE_SSL = email_use_ssl
+DEFAULT_FROM_EMAIL = default_from_email
 
 APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
 APSCHEDULER_RUN_NOW_TIMEOUT = 25
@@ -192,3 +194,5 @@ CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+
+LOGGING = logging_params
