@@ -3,6 +3,7 @@ from django.views.generic import ListView, DetailView, UpdateView, CreateView, D
 from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.utils.translation import gettext as _
 from .models import *
 from .filters import PostFilter
 from .forms import CreatePostForm
@@ -22,6 +23,7 @@ class PostsList(ListView):
         context['news_length'] = self.model.objects.all().count()
         context['categories'] = PostCategory.objects.all()
         context['is_not_author'] = not self.request.user.groups.filter(name='author').exists()
+        context['categories_required'] = True
         return context
 
 
@@ -63,6 +65,7 @@ class PostsSearch(ListView):
         if request_params.get('page'):
             request_params.pop('page')
         context['req'] = request_params
+        context['categories_required'] = True
         return context
 
 
@@ -170,7 +173,6 @@ class CategoryDetail(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(CategoryDetail, self).get_context_data(**kwargs)
-
         subscription = self.request.path.split('/')[-1]
         subscriber = Subscriber.objects.filter(user=self.request.user).first()
         context['is_subscriber'] = CategorySubscriber.objects.filter(

@@ -2,19 +2,19 @@
 
 {% load i18n %}
 
-{% block head_title %}Выйти{% endblock %}
+{% block title %}{% trans "Log out" %}{% endblock %}
 
 {% block content %}
-<h1>Выйти</h1>
+<h1>{% trans "Log out" %}</h1>
 
-<p>Вы действительно хотите выйти из аккаунта?</p>
+<p>{% trans "Are you sure you want to log out of your account?" %}</p>
 
 <form method="post" action="{% url 'account_logout' %}">
   {% csrf_token %}
   {% if redirect_field_value %}
     <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
   {% endif %}
-  <button type="submit" class="btn btn-danger">Выйти</button>
+  <button type="submit" class="btn btn-danger">{% trans "Log out" %}</button>
 </form>
 
 {% endblock %}

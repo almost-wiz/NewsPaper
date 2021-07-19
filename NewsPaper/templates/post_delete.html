@@ -1,22 +1,23 @@
 {% extends 'default.html' %}
 {% load filters %}
+{% load i18n %}
 
-{% block title %} Delete publication {% endblock title %}
+{% block title %}{% trans "Delete post" %}{% endblock title %}
 
 {% block content %}
 <div class="text-center">
-    <h2>Вы действительно хотите удалить эту публикацию?</h2>
+    <h2>{% trans "Are you sure you want to delete this post?" %}</h2>
     <table class="table">
         <thead>
             <tr>
                 <th>
-                    Заголовок
+                    {% trans "Title" %}
                 </th>
                 <th>
-                    Дата публикации
+                    {% trans "Date" %}
                 </th>
                 <th>
-                    Предпоказ
+                    {% trans "Preview" %}
                 </th>
             </tr>
         </thead>
@@ -37,7 +38,7 @@
 
     <form method="POST">
         {% csrf_token %}
-        <input class="btn btn-danger" type="submit" value="Подтвердить">
+        <input class="btn btn-danger" type="submit" value="{% trans 'Delete' %}">
     </form>
 </div>
 {% endblock content %}

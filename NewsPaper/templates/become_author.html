@@ -1,23 +1,19 @@
 {% extends 'default.html' %}
-
-{% block title %}
-Стать авторои
-{% endblock title %}
+{% load i18n %}
+{% block title %}{% trans "Become author" %}{% endblock title %}
 
 {% block content %}
 <div class="text-center">
     {% if is_not_author %}
-        <h3>Чтобы стать автором, нажмите на кнопку ниже</h3>
-        <h4>Став автором, вы сможете писать свои статьи и новости, выкладывать их в общий доступ, изменять их и удалять.
-        При этом в вашем профиле будет отображаться, что вы автор всем пользователем. У всех ваших публикаций также будет
-        видно ваше имя</h4><br>
+        <h3>{% trans "To become an author, click on below" %}</h3>
+        <h4>{% trans "By becoming an author, you can write your articles and news, post them to the public, modify and delete them. In this case, your profile will display that you are the author of the entire user. All your posts will also have your name is visible" %}</h4><br>
         <a href="/news/upgrade/author">
             <button class="btn btn-primary">
-                Стать автором
+                {% trans "Become author" %}
             </button>
         </a>
     {% else %}
-      <h3>Не требуется, вы уже автор</h3>
+      <h3>{% trans "Not required, you are already the author" %}</h3>
     {% endif %}
 </div>
 

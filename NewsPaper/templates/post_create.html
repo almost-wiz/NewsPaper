@@ -1,33 +1,34 @@
 {% extends 'default.html' %}
+{% load i18n %}
 
 {% block title %}
 {% if is_create_view %}
-  Добавление новых постов
+  {% trans "Adding new posts" %}
 {% else %}
-  Редактирование постов
+  {% trans "Editing posts" %}
 {% endif %}
 {% endblock title %}
 
 {% block content %}
 {% if not can_create_post and is_create_view %}
-  <h4 class="text-center">Вы не можете выкладывать более 3 постов в день</h4>
+  <h4 class="text-center">{% trans "You cannot post more than 3 posts per day.</h4>
 {% else %}
   <form method="post">
     {% csrf_token %}
     <div class="form-group">
       <div class="form-row">
         <div class="col">
-          <label>Тип</label>
+          <label>{% trans "Type" %}</label>
           {{ form.type }}
         </div>
         <div class="col">
-          <label>Название</label>
+          <label>{% trans "Title" %}</label>
           {{ form.title }}
         </div>
       </div>
     </div>
     <div class="form-group">
-      <label>Категории</label>
+      <label>{% trans "Categories" %}</label>
       <div class="row col">
       {% for field in form.categories %}
         <div class="form-check col-sm-4">
@@ -37,21 +38,21 @@
       </div>
     </div>
     <div class="form-group">
-      <label>Текст</label>
+      <label>{% trans "Text" %}</label>
       {{ form.text }}
     </div>
     {% if is_create_view %}
       <div class="form-check">
         {{ form.mailing }}
-        <label class="form-check-label" for="mailing">Рассылка по e-mail</label>
+        <label class="form-check-label" for="mailing">{% trans "Mailing" %}</label>
       </div>
       <div class="text-center">
-        <label class="col">Обратите внимание, что вы не можете опубликовать более 3 постов в день</label>
-        <button class="btn btn-primary" type="submit">Добавить</button>
+        <label class="col">{% trans "Please note that you cannot post more than 3 posts per day" %}</label>
+        <button class="btn btn-primary" type="submit">{% trans "Add" %}</button>
       </div>
     {% else %}
       <div class="text-center">
-        <button class="btn btn-primary" type="submit">Изменить</button>
+        <button class="btn btn-primary" type="submit">{% trans "Edit" %}</button>
       </div>
     {% endif %}
   </form>

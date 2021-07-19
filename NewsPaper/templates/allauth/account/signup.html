@@ -3,13 +3,13 @@
 
 {% load i18n %}
 
-{% block title %}Регистрация{% endblock %}
+{% block title %}{% trans "Sign Up" %}{% endblock %}
 
 {% block content %}
 
 <div class="text-center">
-    <h2 style="margin-top: 50px">Регистрация</h2>
-    <p style="margin-bottom: 50px"><a href="{% url 'account_login' %}">Войти</a></p>
+    <h2 style="margin-top: 50px">{% trans "Sign Up" %}</h2>
+    <p style="margin-bottom: 50px">{% trans "Already have an account?" %} <a href="{% url 'account_login' %}">{% trans "Sign In" %}</a></p>
 </div>
 
 <form method="POST" action="{% url 'account_signup' %}">
@@ -31,28 +31,28 @@
   {% endif %}
 
   <div class="form-group row">
-    <label class="col-sm-2 col-form-label" for="email">Почта</label>
+    <label class="col-sm-2 col-form-label" for="email">{% trans "E-mail" %}</label>
     <div class="col-sm-10">
         {{ form.email }}
     </div>
   </div>
 
   <div class="form-group row">
-    <label class="col-sm-2 col-form-label" for="username">Логин</label>
+    <label class="col-sm-2 col-form-label" for="username">{% trans "Login" %}</label>
     <div class="col-sm-10">
       {{ form.username }}
     </div>
   </div>
 
   <div class="form-group row">
-    <label class="col-sm-2 col-form-label" for="password1">Пароль</label>
+    <label class="col-sm-2 col-form-label" for="password1">{% trans "Password" %}</label>
     <div class="col-sm-10">
       {{ form.password1 }}
     </div>
   </div>
 
   <div class="form-group row">
-    <label class="col-sm-2 col-form-label" for="password2">Повторите пароль</label>
+    <label class="col-sm-2 col-form-label" for="password2">{% trans "Repeat password" %}</label>
     <div class="col-sm-10">
       {{ form.password2 }}
     </div>
@@ -60,7 +60,7 @@
 
   <div class="form-group row">
     <div class="col-sm-12">
-      <button type="submit" class="btn btn-primary">Регистрация</button>
+      <button type="submit" class="btn btn-primary">{% trans "Sign Up" %}</button>
     </div>
   </div>
 

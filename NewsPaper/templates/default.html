@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -35,14 +36,14 @@
         <ul class="navbar-nav ml-auto">
           {% if not is_not_author and request.user.is_authenticated %}
             <li class="nav-item">
-              <a class="nav-link js-scroll-trigger" href="/news/create">Добавить пост</a>
+              <a class="nav-link js-scroll-trigger" href="/news/create">{% trans 'Add post' %}</a>
             </li>
           {% endif %}
           <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="/news/search">Поиск</a>
+            <a class="nav-link js-scroll-trigger" href="/news/search">{% trans 'Search' %}</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="/news">Публикации</a>
+            <a class="nav-link js-scroll-trigger" href="/news">{% trans 'Publications' %}</a>
           </li>
           {% if request.user.is_authenticated %}
             <li class="nav-item">
@@ -53,18 +54,37 @@
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                   {% if is_not_author and request.user.is_authenticated %}
                     <a class="dropdown-item" href="/news/become/author/">
-                      Как стать автором?
+                      {% trans 'How to become an author?' %}
                     </a>
                   {% endif %}
-                  <a class="dropdown-item" href="/accounts/logout?next=/accounts/login">Выйти</a>
+                  <a class="dropdown-item" href="/accounts/logout?next=/accounts/login">{% trans 'Log Out' %}</a>
                 </div>
               </div>
             </li>
           {% else %}
             <li class="nav-item">
-              <a class="nav-link js-scroll-trigger" href="/accounts/login">Войти в систему</a>
+              <a class="nav-link js-scroll-trigger" href="/accounts/login">{% trans 'Log in system' %}</a>
             </li>
           {% endif %}
+          <li class="nav-item dropdown">
+            <a class="btn btn-dark dropdown-toggle border-0" href="/" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{% trans "Language" %}</a>
+            <form action="{% url 'set_language' %}" method="post" id="lang_form">{% csrf_token %}
+              <input name="next" type="hidden" value="{{ redirect_to }}">
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                {% get_current_language as LANGUAGE_CODE %}
+                {% get_available_languages as LANGUAGES %}
+                {% get_language_info_list for LANGUAGES as languages %}
+                {% for language in languages %}
+                <li>
+                  <button type="submit" name="language" value="{{ language.code }}" class="{% if language.code == LANGUAGE_CODE %}selected{% else%}demo-text-black{% endif %} dropdown-item">
+                    {{ language.name_local }}
+                  </button>
+                </li>
+                {% endfor %}
+              </ul>
+            </form>
+            </a>
+          </li>
         </ul>
       </div>
     </div>

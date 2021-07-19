@@ -8,20 +8,10 @@ class CustomLoginForm(LoginForm):
 
     def __init__(self, *args, **kwargs):
         super(CustomLoginForm, self).__init__(*args, **kwargs)
-        self.error_messages = {
-            "account_inactive": _("Ваш аккаунт недействительный."),
-            "email_password_mismatch": _(
-                "Ваш e-mail и/или пароль указаны неверно."
-            ),
-            "username_password_mismatch": _(
-                "Ваш логин и/или пароль указаны неверно."
-            ),
-        }
         login_field = forms.CharField(
-            label=_("Логин или e-mail"),
             widget=forms.TextInput(
                 attrs={
-                    "placeholder": _("Логин или e-mail"),
+                    "placeholder": _("Login or e-mail"),
                     "autocomplete": "username_email",
                     "class": "form-control",
                     "id": "login"
@@ -29,10 +19,9 @@ class CustomLoginForm(LoginForm):
             ),
         )
         password_field = forms.CharField(
-            label=_("Пароль"),
             widget=forms.PasswordInput(
                 attrs={
-                    "placeholder": _("Пароль"),
+                    "placeholder": _("Password"),
                     "autocomplete": "current-password",
                     "class": "form-control",
                     "id": "password"
@@ -40,7 +29,6 @@ class CustomLoginForm(LoginForm):
             ),
         )
         remember = forms.BooleanField(
-            label=_("Запомнить меня"),
             required=False,
             widget=forms.CheckboxInput(
                 attrs={
@@ -61,7 +49,6 @@ class CustomSignupForm(SignupForm):
         super(CustomSignupForm, self).__init__(*args, **kwargs)
 
         email_field = forms.EmailField(
-            label=_('E-mail'),
             widget=forms.TextInput(
                 attrs={
                     "type": "email",
@@ -74,10 +61,9 @@ class CustomSignupForm(SignupForm):
         )
 
         username_field = forms.CharField(
-            label=_("Логин"),
             widget=forms.TextInput(
                 attrs={
-                    "placeholder": _("Логин"),
+                    "placeholder": _("Login"),
                     "autocomplete": "username",
                     "class": "form-control",
                     "id": "username"
@@ -85,10 +71,9 @@ class CustomSignupForm(SignupForm):
             ),
         )
         password_field1 = forms.CharField(
-            label=_("Пароль"),
             widget=forms.PasswordInput(
                 attrs={
-                    "placeholder": _("Пароль"),
+                    "placeholder": _("Password"),
                     "autocomplete": "current-password",
                     "class": "form-control",
                     "id": "password1"
@@ -96,10 +81,9 @@ class CustomSignupForm(SignupForm):
             ),
         )
         password_field2 = forms.CharField(
-            label=_("Повторите пароль"),
             widget=forms.PasswordInput(
                 attrs={
-                    "placeholder": _("Повторите пароль"),
+                    "placeholder": _("Repeat password"),
                     "autocomplete": "current-password",
                     "class": "form-control",
                     "id": "password2"

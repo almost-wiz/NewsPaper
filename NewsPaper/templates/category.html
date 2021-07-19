@@ -1,25 +1,24 @@
 {% extends 'default.html' %}
 {% load filters %}
+{% load i18n %}
 
-{% block title %}
-{{ category }}
-{% endblock title %}
+{% block title %}{{ category }}{% endblock title %}
 
 {% block content %}
 <div class="text-center">
     <div class="row">
         <div class="col-sm-8 my-auto">
             <h1>{{ category }}</h1>
-            <h6>{{ subscribers_count }} подписаны</h6>
+            <h6>{{ subscribers_count }} {% trans "subscribed" %}</h6>
         </div>
         <div class="col-sm-4 my-auto">
             {% if is_subscriber %}
                 <a href="/news/unsubscribe/{{ category.id }}">
-                    <button class="btn btn-secondary">Отписаться</button>
+                    <button class="btn btn-secondary">{% trans "Unfollow" %}</button>
                 </a>
             {% else %}
                 <a href="/news/subscribe/{{ category.id }}">
-                    <button class="btn btn-danger">Подписаться</button>
+                    <button class="btn btn-danger">{% trans "Follow" %}</button>
                 </a>
             {% endif %}
         </div>
@@ -30,59 +29,12 @@
     <hr>
     <br>
     {% if posts %}
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>
-                        Дата
-                    </th>
-                    <th>
-                        Заголовок
-                    </th>
-                    <th>
-                        Предпоказ
-                    </th>
-                    {% if not is_not_author %}
-                        <th></th>
-                    {% endif %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for post in posts %}
-                    <tr>
-                        <td>
-                            {{ post.date|date:'d.m.Y' }}
-                        </td>
-                        <td>
-                            <a href="/news/{{ post.id }}">{{ post.title|truncatechars:'30'|censor }}</a>
-                        </td>
-                        <td>
-                            {{ post.text|truncatechars:50|censor }}
-                        </td>
-                        {% if not is_not_author %}
-                          <td>
-                            <div class="dropdown">
-                              <button class="btn btn-light dropdown-toggle border-0" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
-                              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                {% if post.author.user.username == request.user.username %}
-                                  <a class="dropdown-item" href="/news/update/{{ post.id }}">Изменить</a>
-                                  <a class="dropdown-item" href="/news/delete/{{ post.id }}">Удалить</a>
-                                {% else %}
-                                  <a class="dropdown-item" href="/news/{{ post.id }}">Посмотреть</a>
-                                {% endif %}
-                              </div>
-                            </div>
-                          </td>
-                        {% endif %}
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        {% include "table.html" %}
     {% endif %}
     <br>
     <a href="/news/search?author=&title=&datetime=&categories={{ category.id }}">
         <button class="btn btn-light">
-            Больше новостей из этой категории...
+            {% trans "More news from this category ..." %}
         </button>
     </a>
 </div>
