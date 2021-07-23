@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import *
+from modeltranslation.admin import TranslationAdmin
 
 
 class PostAdmin(admin.ModelAdmin):
@@ -34,6 +35,10 @@ class CommentAdmin(admin.ModelAdmin):
 class SubscriberAdmin(admin.ModelAdmin):
     list_display = ['user', 'in_subscriptions']
     search_fields = ['user__username__icontains']
+
+
+class CategoryTranslationAdmin(TranslationAdmin):
+    model = Category
 
 
 admin.site.register(Author, AuthorAdmin)

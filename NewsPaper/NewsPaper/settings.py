@@ -34,6 +34,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'modeltranslation',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -170,6 +171,10 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
+SITE_ID = 1
+
+# All-auth settings
+
 ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_UNIQUE_USERNAME = True
 ACCOUNT_EMAIL_REQUIRED = True
@@ -185,7 +190,7 @@ ACCOUNT_FORMS = {
     'signup': 'sign.forms.CustomSignupForm'
 }
 
-SITE_ID = 1
+# E-mail data
 
 EMAIL_HOST = email_host
 EMAIL_PORT = email_port
@@ -194,10 +199,14 @@ EMAIL_HOST_PASSWORD = email_host_password
 EMAIL_USE_SSL = email_use_ssl
 DEFAULT_FROM_EMAIL = default_from_email
 
+# Celery settings
+
 CELERY_BROKER_URL = 'redis://localhost:6379'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+
+# Logging settings
 
 LOGGING = logging_params

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-19 11:46+0300\n"
+"POT-Creation-Date: 2021-07-22 12:48+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,20 +20,110 @@ msgstr ""
 "%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n"
 "%100>=11 && n%100<=14)? 2 : 3);\n"
 
-#: .\NewsPaperApp\filters.py:27 .\templates\post.html:13
+#: .\NewsPaperApp\filters.py:27 .\NewsPaperApp\models.py:39
+#: .\NewsPaperApp\models.py:91 .\templates\post.html:13
 #: .\templates\search_post.html:21
 msgid "Author"
 msgstr "Автор"
 
 #: .\NewsPaperApp\filters.py:37 .\NewsPaperApp\forms.py:22
-#: .\templates\post_create.html:25 .\templates\post_delete.html:14
-#: .\templates\search_post.html:25 .\templates\table.html:15
+#: .\NewsPaperApp\models.py:94 .\templates\post_create.html:25
+#: .\templates\post_delete.html:14 .\templates\search_post.html:25
+#: .\templates\table.html:15
 msgid "Title"
 msgstr "Название"
 
-#: .\NewsPaperApp\forms.py:40 .\templates\post_create.html:41
+#: .\NewsPaperApp\forms.py:40 .\NewsPaperApp\models.py:95
+#: .\NewsPaperApp\models.py:142 .\templates\post_create.html:41
 msgid "Text"
 msgstr "Текст"
+
+#: .\NewsPaperApp\models.py:9 .\NewsPaperApp\models.py:56
+#: .\NewsPaperApp\models.py:141
+msgid "User"
+msgstr "Пользователь"
+
+#: .\NewsPaperApp\models.py:10 .\NewsPaperApp\models.py:96
+#: .\NewsPaperApp\models.py:144
+msgid "Rating"
+msgstr "Рейтинг"
+
+#: .\NewsPaperApp\models.py:40
+msgid "Authors"
+msgstr "Авторы"
+
+#: .\NewsPaperApp\models.py:44
+msgid "Position"
+msgstr "Позиция"
+
+#: .\NewsPaperApp\models.py:45
+msgid "Description"
+msgstr "Описание"
+
+#: .\NewsPaperApp\models.py:51 .\NewsPaperApp\models.py:129
+msgid "Category"
+msgstr "Категория"
+
+#: .\NewsPaperApp\models.py:52 .\NewsPaperApp\models.py:97
+#: .\templates\post_create.html:31 .\templates\post_delete.html:20
+#: .\templates\search_post.html:39 .\templates\table.html:11
+msgid "Categories"
+msgstr "Категории"
+
+#: .\NewsPaperApp\models.py:57 .\NewsPaperApp\models.py:74
+msgid "Subscriptions"
+msgstr "Подписки"
+
+#: .\NewsPaperApp\models.py:68 .\NewsPaperApp\models.py:73
+msgid "Subscriber"
+msgstr "Подписчик"
+
+#: .\NewsPaperApp\models.py:69
+msgid "Subscribers"
+msgstr "Подписчики"
+
+#: .\NewsPaperApp\models.py:80
+msgid "Category subscriber"
+msgstr "Подписчик категории"
+
+#: .\NewsPaperApp\models.py:81
+msgid "Category subscribers"
+msgstr "Подписчики категорий"
+
+#: .\NewsPaperApp\models.py:92 .\templates\post_create.html:21
+#: .\templates\search_post.html:29
+msgid "Type"
+msgstr "Тип"
+
+#: .\NewsPaperApp\models.py:93 .\NewsPaperApp\models.py:143
+#: .\templates\post_delete.html:17 .\templates\table.html:7
+msgid "Date"
+msgstr "Дата"
+
+#: .\NewsPaperApp\models.py:123 .\NewsPaperApp\models.py:128
+#: .\NewsPaperApp\models.py:140
+msgid "Post"
+msgstr "Пост"
+
+#: .\NewsPaperApp\models.py:124
+msgid "Posts"
+msgstr "Посты"
+
+#: .\NewsPaperApp\models.py:135
+msgid "Post category"
+msgstr "Категория поста"
+
+#: .\NewsPaperApp\models.py:136
+msgid "Post categories"
+msgstr "Категории постов"
+
+#: .\NewsPaperApp\models.py:158
+msgid "Comment"
+msgstr "Комментарий"
+
+#: .\NewsPaperApp\models.py:159
+msgid "Comments"
+msgstr "Комментарии"
 
 #: .\sign\forms.py:14 .\templates\allauth\account\login.html:34
 msgid "Login or e-mail"
@@ -200,15 +290,6 @@ msgstr "Добавление новых постов"
 msgid "Editing posts"
 msgstr "Изменение постов"
 
-#: .\templates\post_create.html:21 .\templates\search_post.html:29
-msgid "Type"
-msgstr "Тип"
-
-#: .\templates\post_create.html:31 .\templates\search_post.html:39
-#: .\templates\table.html:11
-msgid "Categories"
-msgstr "Категории"
-
 #: .\templates\post_create.html:47
 msgid "Mailing"
 msgstr "Рассылка по e-mail"
@@ -233,15 +314,11 @@ msgstr "Удалить пост"
 msgid "Are you sure you want to delete this post?"
 msgstr "Вы действительно хотите удалить этот пост?"
 
-#: .\templates\post_delete.html:17 .\templates\table.html:7
-msgid "Date"
-msgstr "Дата"
-
-#: .\templates\post_delete.html:20 .\templates\table.html:18
+#: .\templates\post_delete.html:23 .\templates\table.html:18
 msgid "Preview"
 msgstr "Предпросмотр"
 
-#: .\templates\post_delete.html:41 .\templates\table.html:57
+#: .\templates\post_delete.html:55 .\templates\table.html:57
 msgid "Delete"
 msgstr "Удалить"
 

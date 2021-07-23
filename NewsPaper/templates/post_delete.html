@@ -17,6 +17,9 @@
                     {% trans "Date" %}
                 </th>
                 <th>
+                    {% trans "Categories" %}
+                </th>
+                <th>
                     {% trans "Preview" %}
                 </th>
             </tr>
@@ -28,6 +31,17 @@
                 </td>
                 <td>
                     {{ post.date|date:'d.m.Y' }}
+                </td>
+                <td>
+                    {% for c in categories %}
+                        {% if c.post.id == post.id %}
+                            <a href="/news/category/{{ c.category.id }}">
+                                <button class="btn btn-light btn-link">
+                                    {{ c.category }}
+                                </button>
+                            </a>
+                        {% endif %}
+                    {% endfor %}
                 </td>
                 <td>
                     {{ post.text|truncatechars:50|censor }}

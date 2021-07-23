@@ -165,6 +165,11 @@ class PostDelete(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     queryset = Post.objects.all()
     success_url = '/news/'
 
+    def get_context_data(self, **kwargs):
+        context = super(PostDelete, self).get_context_data()
+        context['categories'] = PostCategory.objects.filter(post=Post.objects.get(id=self.request.path.split('/')[-1]))
+        return context
+
 
 class CategoryDetail(LoginRequiredMixin, DetailView):
     model = Category
